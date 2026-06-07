@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: enterprise-system-20260607-145233-96akngdqw93f
+  labels:
+    app: enterprise-system-20260607-145233-96akngdqw93f
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: enterprise-system-20260607-145233-96akngdqw93f
+  template:
+    metadata:
+      labels:
+        app: enterprise-system-20260607-145233-96akngdqw93f
+    spec:
+      containers:
+      - name: api
+        image: enterprise-system-20260607-145233-96akngdqw93f:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: DATABASE_URL
+          value: "postgresql://postgres:postgres@db:5432/app"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 5
